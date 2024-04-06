@@ -13,7 +13,7 @@ class Event(models.Model):
     admin = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        related_name='events',
+        related_name='admin_events',
         blank=True, null=True)
     title = models.CharField(
         max_length=256,
@@ -26,11 +26,10 @@ class Event(models.Model):
     date = models.DateTimeField()
     address = models.CharField(
         max_length=const.MAX_ADDRESS_LIMIT,
-        verbose_name='title of event',
+        verbose_name='adress title of event',
         blank=False, null=False)
     direction = models.ManyToManyField(
-        Direction, related_name='events',
-        blank=True, null=True,
+        Direction, related_name='events', blank=True,
         verbose_name='directions')
     description = models.TextField(
         blank=False, null=False,
@@ -46,7 +45,7 @@ class Event(models.Model):
     host = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
-        related_name='events',
+        related_name='host_events',
         blank=True, null=True)
     image = models.ImageField(
         upload_to='users/images/',
@@ -58,7 +57,7 @@ class Event(models.Model):
         blank=True, null=True)
     recording = models.CharField(
         max_length=const.MAX_LINK_LIMIT,
-        verbose_name='event recirding',
+        verbose_name='event recording',
         blank=True, null=True)
 
     class Meta:
@@ -70,7 +69,7 @@ class Event(models.Model):
         return self.title
     
 
-class Program
+class Program(models.Model):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
@@ -102,6 +101,8 @@ class Favorites(models.Model):
         on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name = 'favorites'
+        verbose_name_plural = 'favorites'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'event'],

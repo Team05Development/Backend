@@ -1,0 +1,745 @@
+openapi: 3.0.1
+info:
+  title: Сервис для посетителей событий Яндекса EventHub
+  version: "1.0"
+  description: API позволяет управлять событиями, пользователями, заявками, уведомлениями.
+servers:
+  - url: https://api.eventhub.com/v1
+    description: Сервер разработки
+tags:
+  - name: events
+    description: Операции с событиями
+  - name: users
+    description: Операции с пользователями
+  - name: applications
+    description: Операции с заявками
+  - name: notifications
+    description: Операции с уведомлениями
+
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      summary: Получить список пользователей
+      description: Данная операция позволяет получить список всех пользователей приложения
+      responses:
+        200:
+          description: Список пользователей получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      tags:
+        - users
+      summary: Создать пользоателя
+      description: Данная операция позволяет создать нового пользователя
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'
+      responses:
+        200:
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Получить данные пользователя
+      description: Данная операция позволяет получить данные конкретного пользователя
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Данные пользователя получены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    put:
+      tags:
+        - users
+      summary: Обновить данные пользователя
+      description: Данная операция позволяет обновить данные о конкретном пользователе
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user'            
+      responses:
+        200:
+          description: Данные пользователя обновлены
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/user'
+        default:
+          description: Все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+                
+  /users/{userId}/applications:
+    get:
+      tags:
+        - users
+        - applications
+      summary: Получить список заявок пользователя
+      description: Данная операция позволяет получить список заявок конкретного пользователя
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Список заявок пользователя получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/application'
+        default:
+          description: Все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error' 
+                
+  /users/{userId}/events:
+    get:
+      tags:
+        - users
+        - events
+      summary: Получить список избранных событий пользователя
+      description: Данная операция позволяет получить список избранных событий конкретного пользователя
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+
+      responses:
+        200:
+          description: Список избранных событий пользователя получен
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event'
+        default:
+          description: Все нестандартное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  
+  /users/{userId}/{eventId}/notifications:
+    post:
+      tags:
+        - users
+        - events
+        - notifications
+      summary: Создать уведомление для конкретного пользователя и события
+      description: Данная операция позволяет создать уведомление для конкретного пользователя и события
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: string
+        - name: eventId
+          in: path
+          description: ID события
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/notification'
+      responses:
+        200:
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notification'
+  /events: 
+    get:
+      summary: Список событий
+      description: Получить все события в системе
+      tags: 
+        - events
+      operationId: getAllEvent
+      responses:
+        200:
+          description: Успешный ответ со списком событий
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event'
+                  
+  /events/{event_id}:
+    get:
+      summary: Найти событие по ID
+      description: Получить событие по идентификатору
+      tags: 
+        - events
+      operationId: getEventById
+      parameters:
+        - name: event_id
+          in: path
+          description: ID события
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        404:
+          description: Событие не найдено
+        400:
+          description: Invalid ID supplied
+        200:
+          description: Успешный ответ с cобытием
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/event'
+                  
+  /events/{user_event}: 
+   get:
+    summary: Список событий пользователя
+    description: Получить список событий из ЛК пользователя
+    tags: 
+      - events
+    operationId: getUsersEvent
+    parameters:
+    - name: user_event
+      in: path
+      description: события пользователя
+      required: true
+      schema:
+        type: array
+        items:
+          type: string
+    responses:
+      '404':
+          description: Событий не найдено
+      '200':
+        description: Успешный ответ со списком событий пользователя
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/event'
+                
+  /events/event_by_themes: 
+   get:
+    summary: Найти событие по теме
+    description: Выгрузить события относящиеся к теме
+    tags: 
+      - events
+    operationId: findEventsByThemes
+    parameters:
+    - name: events_by_themes
+      in: query
+      description: сортировка по темам
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string     
+    responses:
+      '404':
+          description: Событий не найдено
+      '200':
+        description: Успешный ответ со списком события по теме
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/event'
+                
+  /events/event_by_key: 
+   get:
+    summary: Найти событие по ключу
+    description: Выгрузить события по ключевым словам
+    tags: 
+      - events
+    operationId: findEventsByKeys
+    parameters:
+    - name: events_by_keys
+      in: query
+      description: сортировка по ключевым словам
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string     
+    responses:
+      '404':
+          description: Событий не найдено
+      '200':
+        description: Успешный ответ со списком события по ключевым словам
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/event'
+                
+  /events/event_by_filter: 
+   get:
+    summary: Найти событие по фильтру
+    description: Выгрузить события по фильтру
+    tags: 
+      - events
+    operationId: findEventsByFilter
+    parameters:
+    - name: events_by_filter
+      in: query
+      description: сортировка по фильтру
+      required: false
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string     
+    responses:
+      '404':
+          description: Событий не найдено
+      '200':
+        description: Успешный ответ со списком события по фильтру
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/event'    
+  
+  /events/{event_recording}:
+   post:
+    summary: Загрузить запись события
+    description: Загрузить запись прошедшего события
+    tags: 
+      - events
+    operationId: getEventRecording
+    parameters:
+        - name: event_recording
+          in: path
+          description: ID события для загрузки
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: additionalMetadata
+          in: query
+          description: Additional Metadata
+          required: false
+          schema:
+            type: string
+    requestBody:
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary   
+    responses:
+      '400':
+          description: Ошибка загрузки
+      '200':
+        description: Успешная загрузка
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiResponse'
+  
+  /events/{event_presentation}:
+   post:
+    summary: Загрузить презентацию
+    description: Загрузить презентацию прошедшего события
+    tags: 
+      - events
+    operationId: getEventPresentation
+    parameters:
+        - name: event_presentation
+          in: path
+          description: ID события для загрузки
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: additionalMetadata
+          in: query
+          description: Additional Metadata
+          required: false
+          schema:
+            type: string
+    requestBody:
+      content:
+        application/octet-stream:
+          schema:
+            type: string
+            format: binary   
+    responses:
+      '400':
+          description: Ошибка загрузки
+      '200':
+        description: Успешная загрузка
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApiResponse'            
+                
+  /applications:
+    get:
+      tags:
+        - applications
+      summary: Посмотреть заявки
+      operationId: viewApplication
+      description: Просмотреть мои заявки
+      parameters:
+        - in: query
+          name: name
+          description: наименование заявки
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: typeApplication
+          description: тип зявки
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: themeApplication
+          description: тема заявки
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: keyApplication
+          description: ключ заявки
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+            maximum: 100
+        - in: query
+          name: userApplication
+          description: заявки пользователя
+          schema:
+            type: string
+            minimum: 0
+            maximum: 100000
+      responses:
+        '200':
+          description: результаты поиска по запросу
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: неправильные параметры поиска
+          content:
+            application/json:
+              schema:
+                type: string
+    post:
+      tags:
+        - applications
+      summary: создание заявки на участие
+      operationId: addApplication
+      description: создание заявки на событие
+      parameters:
+        - in: query
+          name: nameApplication
+          description: наименование заявки
+          schema:
+            type: string
+        - in: query
+          name: timeApplication
+          description: время заявки
+          schema:
+            type: string
+        - in: query
+          name: userApplication
+          description: фио пользователя
+          schema:
+            type: string
+        - in: query
+          name: telUserApplication
+          description: телефон пользователя
+          schema:
+            type: string
+      responses:
+        '200':
+          description: результаты создания заявки на событие
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: неправильные параметры регистрации заявки
+          content:
+            application/json:
+              schema:
+                type: string
+    put:
+      tags:
+        - applications
+      summary: обновить данные заявки
+      operationId: refreshApplication
+      description: обновление заявки
+      parameters:
+        - in: query
+          name: selectKeyApplication
+          description: ввести ключ заявки
+          schema:
+            type: string
+      responses:
+        '200':
+          description: результат обновления
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: ошибка обновления
+          content:
+            application/json:
+              schema:
+                type: string
+    delete:
+      tags:
+        - applications
+      summary: удалить заявку
+      operationId: delApplication
+      description: удаление заявки
+      parameters:
+        - in: query
+          name: selectKeyApplication
+          description: ввести ключ заявки
+          schema:
+            type: string
+      responses:
+        '200':
+          description: результат удаления заявки
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: ошибка удаления
+          content:
+            application/json:
+              schema:
+                type: string
+              
+components:
+  schemas:
+    user:
+      type: object
+      properties:
+        userId:
+          type: string
+        e-mail:
+          type: string
+        password:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        second_name:
+          type: string
+        phone:
+          type: string
+        job:
+          type: string
+        position:
+          type: string
+        date:
+          type: string
+          format: 2023-01-20T00:00:00
+        experience:
+          type: string
+        theme:
+          type: string
+        photo:
+          type: string
+          
+    application:
+      type: object
+      properties:
+        applicationId:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        userId:
+          type: string
+        gender:
+          type: string
+          enum:
+           - жен
+           - муж
+        phone:
+          type: string
+        job:
+          type: string
+        position:
+          type: string
+        created_at:
+          type: string
+          format: 2023-01-20T00:00:00
+        experience:
+          type: string
+        theme:
+          type: string
+        status:
+          type: string
+          enum:
+           - отправлена
+           - подтверждена
+           - отменена
+    
+    event:
+      type: object
+      properties:
+        eventId:
+          type: string
+        adminId:
+          type: string
+        title:
+          type: string
+        limit:
+          type: string
+        date:
+          type: string
+          format: 2023-01-20T00:00:00
+        address:
+          type: string
+        theme:
+          type: string
+        description:
+          type: string
+        program:
+          type: string
+        format:
+          type: string
+        status:
+          type: string
+          enum:
+           - регистрация
+           - завершено
+           - отменено
+        host:
+          type: string
+        users:
+          type: string
+        applications:
+          type: string
+        presentation:
+          type: string
+        recording:
+          type: string
+        photo:
+          type: string
+  
+    notification:
+      type: object
+      properties:
+        notificationId:
+          type: string
+        type:
+          type: string
+        theme:
+          type: string
+        content:
+          type: string
+        date:
+          type: string
+          format: 2023-01-20T00:00:00
+        retention_period:
+          type: string
+          
+    error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string 
+
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'

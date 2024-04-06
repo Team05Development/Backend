@@ -49,10 +49,6 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
-    
-    # username = None
-    # REQUIRED_FIELDS = ["email",]
-    # email = models.EmailField(verbose_name='email address', unique=True)
     phone_number_regex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
     phone_number = models.CharField(validators=[phone_number_regex], max_length=16, unique=True)
     job = models.CharField(blank=True, max_length=256)

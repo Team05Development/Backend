@@ -89,3 +89,25 @@ class Program
         on_delete=models.SET_NULL,
         related_name='programs',
         blank=True, null=True)
+
+
+class Favorites(models.Model):
+    user = models.ForeignKey(
+        User,
+        related_name="favorites",
+        on_delete=models.CASCADE)
+    event = models.ForeignKey(
+        Event,
+        related_name="favorites",
+        on_delete=models.CASCADE)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'event'],
+                name="unique_events")
+        ]
+        ordering = ["-event"]
+
+    def __str__(self):
+        f"{self.user} favorites {self.event}"

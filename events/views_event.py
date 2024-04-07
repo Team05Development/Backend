@@ -78,5 +78,6 @@ class EventViewSet(viewsets.ModelViewSet):
 
         queryset = queryset.annotate(application_status=Subquery(
             Application.objects.filter(event_id=self.kwargs['pk'], user_id=user_id).values('status__name')[:1]
-        ))
+            ))
+
         return queryset.order_by('-date')

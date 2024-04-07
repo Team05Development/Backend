@@ -12,6 +12,7 @@ from .serializers_auxiliary import (
     DirectionSerializer,
     FormatSerializer,
     EventStatusSerializer)
+from .serializers_application import ApplicationSerializer
 from . import constants as const
 
 User = get_user_model()

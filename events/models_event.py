@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 
 from . import constants as const
 from .models_auxiliary import Direction, Format, EventStatus
+# from .models_application import Application
 
 User = get_user_model()
 
@@ -58,7 +59,7 @@ class Event(models.Model):
         max_length=const.MAX_LINK_LIMIT,
         verbose_name='event recording',
         blank=True, null=True)
-
+    
     class Meta:
         ordering = ['-date']
         verbose_name = 'event'

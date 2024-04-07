@@ -33,7 +33,7 @@ User = get_user_model()
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']
-    serializer_class = EventSerializer
+    # serializer_class = EventSerializer
     # permission_classes = (ReadOnly,)
     pagination_class = CustomPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
@@ -48,7 +48,10 @@ class EventViewSet(viewsets.ModelViewSet):
     #     if self.action in ['update', 'partial_update', 'destroy']:
     #         return (IsAuthorOrReadOnly(),)
     #     return (super().get_permissions())
-
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return EventSerializer
+        return EventSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -75,9 +78,5 @@ class EventViewSet(viewsets.ModelViewSet):
                 output_field=BooleanField()
             )
         )
-
-        queryset = queryset.annotate(application_status=Subquery(
-            Application.objects.filter(event_id=self.kwargs['pk'], user_id=user_id).values('status__name')[:1]
-            ))
-
+        queryset = queryset.annotate(application_status=F('applications__status__name'))
         return queryset.order_by('-date')

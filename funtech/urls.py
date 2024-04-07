@@ -12,6 +12,9 @@ from django.conf.urls.static import static
 
 from events.views_event import (
     EventViewSet,)
+from events.views_applications import (
+    ApplicationAPIview,)
+
 
 router = routers.DefaultRouter()
 router.register(r'events', EventViewSet, basename="event")
@@ -23,6 +26,9 @@ urlpatterns = [
     # path('api/ingredients/', ListIngredientsAPIView.as_view()),
     # path('api/ingredients/<int:pk>/', RetrieveIngredientsAPIView.as_view()),
     # path('api/recipes/<int:pk>/favorite/', FavoritesAPIView.as_view()),
+    path('api/events/<int:pk>/application/', ApplicationAPIview.as_view()),
+    # path('api/tags/<int:pk>/', RetrieveTagsAPIView.as_view()),
+
     # path('api/tags/', ListTagsAPIView.as_view()),
     # path('api/tags/<int:pk>/', RetrieveTagsAPIView.as_view()),
     # path('api/recipes/<int:pk>/shopping_cart/', ShoppingCartAPIview.as_view()),

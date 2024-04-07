@@ -111,6 +111,7 @@ class EventResponseSerializer(serializers.ModelSerializer):
     image = serializers.CharField(source='image.url')
     is_favorited = serializers.BooleanField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
+    application_status = serializers.CharField(read_only=True)
 
     class Meta:
         model = Event
@@ -118,4 +119,4 @@ class EventResponseSerializer(serializers.ModelSerializer):
             'id', 'admin', 'title', 'limit', 'date', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
-            'is_favorited', 'is_applied')       
+            'is_favorited', 'is_applied', 'application_status')

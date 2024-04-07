@@ -3,21 +3,13 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from events.serializers_event import EventResponseSerializer
-from users.serializers import CustomUserSerializer
+from events.serializers_auxiliary import ApplicationStatusSerializer
 
 from .models_auxiliary import ApplicationStatus
 from .models_application import Application
 from .models_event import Event
 
 User = get_user_model()
-
-
-class ApplicationStatusSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ApplicationStatus
-        fields = ('name',)
-
 
 class ApplicationSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
@@ -32,17 +24,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
         required=True,
         queryset=ApplicationStatus.objects.all()
     )
-    created_at = serializers.DateTimeField(required=False)
 
     class Meta:
         model = Application
-        fields = ('user', 'event', 'status', 'created_at')
-
-    def create(self, validated_data):
-        application = Application.objects.create(**validated_data)
-        created_at = datetime.now().isoformat()
-        application.created_at = created_at
-        return application
+        fields = ('user', 'event', 'status')
 
     def to_representation(self, instance):
         return (ApplicationResponseSerializer(context=self.context).
@@ -50,10 +35,12 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
 
 class ApplicationResponseSerializer(serializers.ModelSerializer):
-    event = EventResponseSerializer()
-    status = ApplicationStatusSerializer()
-    created_at = serializers.DateTimeField(read_only=True)
+    user = serializers.CharField(source='user.email')
+    event = serializers.CharField(source='event.title')
+    status = serializers.CharField(source='status.name')
 
     class Meta:
         model = Application
-        fields = ('id', 'event', 'status')
+        fields = ('id', 'user', 'event', 'status', 'created_at')
+
+

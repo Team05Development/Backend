@@ -32,4 +32,4 @@ class Application(models.Model):
         ordering = ["-event"]
 
     def __str__(self):
-        f"{self.user} applied to {self.event}"
+        return f"{self.user} applied to {self.event}"

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_filters',
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -153,6 +154,8 @@ REST_FRAMEWORK = {
 
     'DEFAULT_PAGINATION_CLASS': 'events.pagination.CustomPageNumberPagination',
     'PAGE_SIZE': 6,
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -175,3 +178,12 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
 ]
+
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Your Project API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}

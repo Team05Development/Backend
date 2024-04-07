@@ -10,6 +10,9 @@ class Direction(models.Model):
         max_length=const.MAX_SLUG_LIMIT,
         verbose_name='slug'
     )
+    color = models.CharField(
+        max_length=const.MAX_LENGTH_COLOR,
+        blank=True, null=True)
 
     class Meta:
         verbose_name = 'direction'
@@ -28,6 +31,9 @@ class Format(models.Model):
         max_length=const.MAX_SLUG_LIMIT,
         verbose_name='slug'
     )
+    color = models.CharField(
+        max_length=const.MAX_LENGTH_COLOR,
+        blank=True, null=True)
 
     class Meta:
         verbose_name = 'format'
@@ -46,6 +52,9 @@ class EventStatus(models.Model):
         max_length=const.MAX_SLUG_LIMIT,
         verbose_name='slug'
     )
+    color = models.CharField(
+        max_length=const.MAX_LENGTH_COLOR,
+        blank=True, null=True)
 
     class Meta:
         verbose_name = 'event status'
@@ -64,6 +73,9 @@ class ApplicationStatus(models.Model):
         max_length=const.MAX_SLUG_LIMIT,
         verbose_name='slug'
     )
+    color = models.CharField(
+        max_length=const.MAX_LENGTH_COLOR,
+        blank=True, null=True)
 
     class Meta:
         verbose_name = 'application status'

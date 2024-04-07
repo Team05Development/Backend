@@ -1,0 +1,128 @@
+[
+{
+  "model": "events.applicationstatus",
+  "pk": 1,
+  "fields": {
+    "name": "Отправлена",
+    "slug": "sent",
+    "color": "#00FFFF"
+  }
+},
+{
+  "model": "events.applicationstatus",
+  "pk": 2,
+  "fields": {
+    "name": "Одобрена",
+    "slug": "approved",
+    "color": "#00FF00"
+  }
+},
+{
+  "model": "events.applicationstatus",
+  "pk": 3,
+  "fields": {
+    "name": "Отклонена",
+    "slug": "rejected",
+    "color": "#FF0000"
+  }
+},
+{
+  "model": "events.direction",
+  "pk": 1,
+  "fields": {
+    "name": "Backend",
+    "slug": "backend",
+    "color": null
+  }
+},
+{
+  "model": "events.direction",
+  "pk": 2,
+  "fields": {
+    "name": "Frontend",
+    "slug": "frontend",
+    "color": null
+  }
+},
+{
+  "model": "events.direction",
+  "pk": 3,
+  "fields": {
+    "name": "Mobile",
+    "slug": "mobile",
+    "color": null
+  }
+},
+{
+  "model": "events.direction",
+  "pk": 4,
+  "fields": {
+    "name": "QA",
+    "slug": "qa",
+    "color": null
+  }
+},
+{
+  "model": "events.direction",
+  "pk": 5,
+  "fields": {
+    "name": "ML",
+    "slug": "ml",
+    "color": null
+  }
+},
+{
+  "model": "events.eventstatus",
+  "pk": 1,
+  "fields": {
+    "name": "Регистрация открыта",
+    "slug": "registration_opened",
+    "color": "#00FF00"
+  }
+},
+{
+  "model": "events.eventstatus",
+  "pk": 2,
+  "fields": {
+    "name": "Регистрация закрыта",
+    "slug": "registration_closed",
+    "color": "#FF0000"
+  }
+},
+{
+  "model": "events.eventstatus",
+  "pk": 3,
+  "fields": {
+    "name": "Завершено",
+    "slug": "completed",
+    "color": "#0000FF"
+  }
+},
+{
+  "model": "events.eventstatus",
+  "pk": 4,
+  "fields": {
+    "name": "Отменено",
+    "slug": "canceled",
+    "color": "#666666"
+  }
+},
+{
+  "model": "events.format",
+  "pk": 1,
+  "fields": {
+    "name": "онлайн",
+    "slug": "online",
+    "color": "#00FFFF"
+  }
+},
+{
+  "model": "events.format",
+  "pk": 2,
+  "fields": {
+    "name": "офлайн",
+    "slug": "offline",
+    "color": "#0000FF"
+  }
+}
+]

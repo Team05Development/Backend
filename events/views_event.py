@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Sum, F, Count, Q, Case, When, BooleanField
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
+from django.db.models import OuterRef, Subquery
 
 from .pagination import CustomPageNumberPagination
 from .filters import EventFilter
@@ -20,14 +21,15 @@ from . import constants as const
 from .models_event import (
     Event, Favorites,)
 from .models_auxiliary import EventStatus
+from .models_application import Application
 
 from .serializers_event import (
-    EventSerializer,)
-
+    EventSerializer, EventResponseSerializer)
+from .decorators import response_schema
 
 User = get_user_model()
 
-
+@response_schema(serializer=EventResponseSerializer)
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']
@@ -48,29 +50,34 @@ class EventViewSet(viewsets.ModelViewSet):
     #     return (super().get_permissions())
 
 
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     user_id = user.id if not user.is_anonymous else None
-    #     # queryset = Event.objects.all().annotate(
-        #     total_favorite=Count(
-        #         "favorites",
-        #         filter=Q(favorites__user_id=user_id)
-        #     ),
-        #     is_favorited=Case(
-        #         When(total_favorite__gte=1, then=True),
-        #         default=False,
-        #         output_field=BooleanField()
-        #     )
-        # )
-        # queryset = queryset.annotate(
-        #     total_applications=Count(
-        #         "applications",
-        #         filter=Q(applications__user_id=user_id)
-        #     ),
-        #     is_applied=Case(
-        #         When(total_applications__gte=1, then=True),
-        #         default=False,
-        #         output_field=BooleanField()
-        #     )
-        # )
-        # return queryset.order_by('-date')
+    def get_queryset(self):
+        user = self.request.user
+        user_id = user.id if not user.is_anonymous else None
+        queryset = Event.objects.all().annotate(
+            total_favorite=Count(
+                "favorites",
+                filter=Q(favorites__user_id=user_id)
+            ),
+            is_favorited=Case(
+                When(total_favorite__gte=1, then=True),
+                default=False,
+                output_field=BooleanField()
+            )
+        )
+        queryset = queryset.annotate(
+            total_applications=Count(
+                "applications",
+                filter=Q(applications__user_id=user_id)
+            ),
+            is_applied=Case(
+                When(total_applications__gte=1, then=True),
+                default=False,
+                output_field=BooleanField()
+            )
+        )
+
+        queryset = queryset.annotate(application_status=Subquery(
+            Application.objects.filter(event_id=self.kwargs['pk'], user_id=user_id).values('status__name')[:1]
+            ))
+
+        return queryset.order_by('-date')

@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from . import constants as const
 from .models_auxiliary import Direction, Format, EventStatus
 
-
 User = get_user_model()
 
 

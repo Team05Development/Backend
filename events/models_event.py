@@ -79,7 +79,7 @@ class Program(models.Model):
         validators=[MinValueValidator(0),
                     MaxValueValidator(const.MAX_SECTION_LIMIT)],
         blank=False, null=False,)
-    time = models.DateTimeField()
+    date_time = models.DateTimeField()
     description = models.TextField(
         blank=False, null=False,
         verbose_name='description of event section')

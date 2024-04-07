@@ -33,7 +33,7 @@ User = get_user_model()
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']
-    # serializer_class = EventSerializer
+    serializer_class = EventSerializer
     # permission_classes = (ReadOnly,)
     pagination_class = CustomPageNumberPagination
     filter_backends = (DjangoFilterBackend,)
@@ -48,15 +48,12 @@ class EventViewSet(viewsets.ModelViewSet):
     #     if self.action in ['update', 'partial_update', 'destroy']:
     #         return (IsAuthorOrReadOnly(),)
     #     return (super().get_permissions())
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return EventSerializer
-        return EventSerializer
+     
 
     def get_queryset(self):
         user = self.request.user
         user_id = user.id if not user.is_anonymous else None
-        queryset = Event.objects.all().annotate(
+        queryset = Event.objects.all().prefetch_related('programs').annotate(
             total_favorite=Count(
                 "favorites",
                 filter=Q(favorites__user_id=user_id)

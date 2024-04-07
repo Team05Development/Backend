@@ -4,7 +4,23 @@ from .models_event import Event, Program, Favorites
 from .models_auxiliary import Direction, Format, EventStatus, ApplicationStatus
 from .models_application import Application
 
-admin.site.register(Event)
+
+class ProgramInline(admin.TabularInline):
+    model = Program
+    extra = 0
+    min_num = 1
+
+    # def get_formset(self, request, obj=None, **kwargs):
+    #     formset = super().get_formset(request, obj=None, **kwargs)
+    #     formset.validate_min = True
+    #     return formset
+
+class EventAdmin(admin.ModelAdmin):
+    inlines = (
+        ProgramInline,        
+    )
+
+admin.site.register(Event, EventAdmin)
 admin.site.register(Program)
 admin.site.register(Favorites)
 admin.site.register(Direction)

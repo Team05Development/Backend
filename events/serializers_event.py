@@ -1,18 +1,18 @@
 import base64
 
+from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 
-from .models_event import Event
+from .models_event import Event, Program
 from .models_auxiliary import Direction, Format, EventStatus
 from users.serializers import CustomUserSerializer
 from .serializers_auxiliary import (
     DirectionSerializer,
     FormatSerializer,
     EventStatusSerializer)
-from .serializers_application import ApplicationSerializer
 from . import constants as const
 
 User = get_user_model()
@@ -27,6 +27,15 @@ class Base64ImageField(serializers.ImageField):
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
 
         return super().to_internal_value(data)
+
+
+class ProgramSerializer(serializers.ModelSerializer):
+    speaker = CustomUserSerializer()
+    class Meta:
+        model = Program
+        fields = (
+            'section', 'date_time', 'description', 'speaker')
+    
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -113,6 +122,7 @@ class EventResponseSerializer(serializers.ModelSerializer):
     is_favorited = serializers.BooleanField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
+    program = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
@@ -120,4 +130,10 @@ class EventResponseSerializer(serializers.ModelSerializer):
             'id', 'admin', 'title', 'limit', 'date', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
-            'is_favorited', 'is_applied', 'application_status')
+            'is_favorited', 'is_applied', 'application_status', 'program')
+        
+    def get_program(self, instance):
+        program = Program.objects.filter(event__id=instance.id).order_by('date_time')
+        serializer = ProgramSerializer(program, many=True)
+        return serializer.data
+        

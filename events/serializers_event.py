@@ -108,7 +108,7 @@ class EventSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-        return (EventResponseSerializer(context=self.context).
+        return (EventShortResponseSerializer(context=self.context).
                 to_representation(instance))
 
 
@@ -137,3 +137,12 @@ class EventResponseSerializer(serializers.ModelSerializer):
         serializer = ProgramSerializer(program, many=True)
         return serializer.data
         
+class EventShortResponseSerializer(serializers.ModelSerializer):
+    """Short version for test purposes"""
+
+    class Meta:
+        model = Event
+        fields = (
+            'id', 'admin', 'title', 'limit', 'date', 'address',
+            'direction', 'description', 'format', 'status', 'host',
+            'image', 'presentation', 'recording',)

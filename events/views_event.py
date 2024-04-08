@@ -36,8 +36,9 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     # permission_classes = (ReadOnly,)
     pagination_class = CustomPageNumberPagination
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
     filterset_class = EventFilter
+    # search_fields = ('address',)
     ordering = ('-date',)
 
     # def get_permissions(self):

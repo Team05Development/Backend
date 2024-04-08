@@ -1,6 +1,7 @@
 import django_filters
 from django_filters import MultipleChoiceFilter
 from django_filters.fields import MultipleChoiceField
+from django.utils import timezone
 
 from .models_event import Event
 
@@ -29,6 +30,10 @@ class EventFilter(django_filters.FilterSet):
     direction = django_filters.CharFilter(method='filter_direction')
     formats = django_filters.CharFilter(method='filter_formats')
     status = django_filters.CharFilter(method='filter_status')
+    
+    most_visited = django_filters.NumberFilter(
+        field_name='most_visited',
+        method='filter_most_visited')
 
     class Meta:
         model = Event
@@ -41,7 +46,7 @@ class EventFilter(django_filters.FilterSet):
 
     def filter_is_applied(self, queryset, name, value):
         if value is not None:
-            return queryset.filter(filter_is_applied=value)
+            return queryset.filter(is_applied=value)
         return queryset
     
     def filter_direction(self, qs, name, value):
@@ -52,3 +57,11 @@ class EventFilter(django_filters.FilterSet):
     
     def filter_status(self, qs, name, value):
         return qs.filter(status__slug__in=self.request.GET.getlist('status'))
+    
+    def filter_most_visited(self, queryset, name, value):
+        if value is not None:
+            now = timezone.now()
+            queryset.filter(date__gte=now).order_by('date')
+            nearest_events_ids = queryset[:4].values('id')
+            return queryset.exclude(id__in=nearest_events_ids).order_by('-total_applications')[:value]
+        return queryset

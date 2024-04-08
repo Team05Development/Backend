@@ -108,7 +108,7 @@ class EventSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
-        return (EventResponseSerializer(context=self.context).
+        return (EventShortResponseSerializer(context=self.context).
                 to_representation(instance))
 
 
@@ -122,6 +122,7 @@ class EventResponseSerializer(serializers.ModelSerializer):
     is_favorited = serializers.BooleanField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
+    total_applications = serializers.IntegerField(read_only=True)
     program = serializers.SerializerMethodField()
 
     class Meta:
@@ -130,10 +131,20 @@ class EventResponseSerializer(serializers.ModelSerializer):
             'id', 'admin', 'title', 'limit', 'date', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
-            'is_favorited', 'is_applied', 'application_status', 'program')
+            'is_favorited', 'is_applied', 'application_status',
+            'total_applications', 'program')
         
     def get_program(self, instance):
         program = Program.objects.filter(event__id=instance.id).order_by('date_time')
         serializer = ProgramSerializer(program, many=True)
         return serializer.data
         
+class EventShortResponseSerializer(serializers.ModelSerializer):
+    """Short version for test purposes"""
+
+    class Meta:
+        model = Event
+        fields = (
+            'id', 'title', 'date', 'address',
+            'direction', 'description', 'format', 'status', 
+            'image',)

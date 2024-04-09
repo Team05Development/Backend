@@ -10,10 +10,9 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from django.conf import settings
 from django.conf.urls.static import static
 
-from events.views_event import (
-    EventViewSet,)
-from events.views_applications import (
-    ApplicationAPIview,)
+from events.views_event import EventViewSet
+from events.views_applications import ApplicationAPIview
+from events.views_favorites import FavoritesAPIView
 
 
 router = routers.DefaultRouter()
@@ -25,7 +24,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     # path('api/ingredients/', ListIngredientsAPIView.as_view()),
     # path('api/ingredients/<int:pk>/', RetrieveIngredientsAPIView.as_view()),
-    # path('api/recipes/<int:pk>/favorite/', FavoritesAPIView.as_view()),
+    path('api/events/<int:pk>/favorite/', FavoritesAPIView.as_view()),
     path('api/events/<int:pk>/application/', ApplicationAPIview.as_view()),
     # path('api/tags/<int:pk>/', RetrieveTagsAPIView.as_view()),
 

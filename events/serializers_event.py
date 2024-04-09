@@ -14,6 +14,7 @@ from .serializers_auxiliary import (
     FormatSerializer,
     EventStatusSerializer)
 from . import constants as const
+from .mixins import ApplicationSerializerMixin, FavoritesSerializerMixin
 
 User = get_user_model()
 
@@ -38,7 +39,7 @@ class ProgramSerializer(serializers.ModelSerializer):
     
 
 
-class EventSerializer(serializers.ModelSerializer):
+class EventPostSerializer(serializers.ModelSerializer):
     admin = serializers.PrimaryKeyRelatedField(
         required=True,
         many=False,
@@ -112,26 +113,28 @@ class EventSerializer(serializers.ModelSerializer):
                 to_representation(instance))
 
 
-class EventResponseSerializer(serializers.ModelSerializer):
+class EventFullResponseSerializer(
+    serializers.ModelSerializer,
+    ApplicationSerializerMixin,
+    FavoritesSerializerMixin):
+    """Full version of event with all fields"""
+
     admin = CustomUserSerializer()
     direction = DirectionSerializer(many=True)
     format = FormatSerializer()
     status = EventStatusSerializer()
     host = CustomUserSerializer()
     image = serializers.CharField(source='image.url')
-    is_favorited = serializers.BooleanField(read_only=True)
-    is_applied = serializers.BooleanField(read_only=True)
-    application_status = serializers.CharField(read_only=True)
-    total_applications = serializers.IntegerField(read_only=True)
+
     program = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = (
-            'id', 'admin', 'title', 'limit', 'date', 'address',
+            'id', 'admin', 'title', 'limit', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
-            'is_favorited', 'is_applied', 'application_status',
+            'is_favorited', 'total_favorites', 'is_applied', 'application_status',
             'total_applications', 'program')
         
     def get_program(self, instance):
@@ -140,11 +143,22 @@ class EventResponseSerializer(serializers.ModelSerializer):
         return serializer.data
         
 class EventShortResponseSerializer(serializers.ModelSerializer):
-    """Short version for test purposes"""
+    """Short version of event with a subset of fields"""
+    
+    direction = DirectionSerializer(many=True)
+    format = FormatSerializer()
+    status = EventStatusSerializer()
+    image = serializers.CharField(source='image.url')
+    is_favorited = serializers.BooleanField(read_only=True)
+    total_favorites = serializers.IntegerField(read_only=True)
+    is_applied = serializers.BooleanField(read_only=True)
+    application_status = serializers.CharField(read_only=True)
+    total_applications = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Event
         fields = (
-            'id', 'title', 'date', 'address',
+            'id', 'title', 'date', 'city',
             'direction', 'description', 'format', 'status', 
-            'image',)
+            'image',  'is_favorited', 'total_favorites', 'is_applied',
+            'application_status', 'total_applications', )

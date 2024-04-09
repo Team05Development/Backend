@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from .models_application import Application
 from .models_event import Event
 from .models_auxiliary import ApplicationStatus
-from .serializers_application import ApplicationSerializer
+from .serializers_event import EventFullResponseSerializer
 from . import constants as const
 
 
@@ -39,9 +39,14 @@ class ApplicationAPIview(APIView):
                 status=status.HTTP_400_BAD_REQUEST)
         status_id = request.data.get("status")
         if status_id is None:
-            status_obj, created = ApplicationStatus.objects.get_or_create(
-                slug=const.DEFAULT_APPLICATION_STATUS_SLUG,
-                name=const.DEFAULT_APPLICATION_STATUS_NAME)
+            if event.unlimited==False:
+                status_obj, created = ApplicationStatus.objects.get_or_create(
+                    slug=const.DEFAULT_APPLICATION_STATUS_SLUG,
+                    name=const.DEFAULT_APPLICATION_STATUS_NAME)
+            else:
+                status_obj, created = ApplicationStatus.objects.get_or_create(
+                    slug=const.UNLIMITED_APPLICATION_STATUS_SLUG,
+                    name=const.UNLIMITED_APPLICATION_STATUS_NAME)
         else:
             status_obj = get_object_or_404(ApplicationStatus, pk=status_id)
         application = Application.objects.create(
@@ -49,7 +54,7 @@ class ApplicationAPIview(APIView):
             event=event,
             status=status_obj)
 
-        serializer = ApplicationSerializer(application)
+        serializer = EventFullResponseSerializer(event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
@@ -92,5 +97,5 @@ class ApplicationAPIview(APIView):
                     status=status.HTTP_400_BAD_REQUEST)
         application.status=status_obj
         application.save()
-        serializer = ApplicationSerializer(application)
+        serializer = EventFullResponseSerializer(event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

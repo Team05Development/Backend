@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 
 from . import constants as const
 from .models_auxiliary import Direction, Format, EventStatus
-# from .models_application import Application
 
 User = get_user_model()
 
@@ -23,7 +22,12 @@ class Event(models.Model):
         validators=[MinValueValidator(0),
                     MaxValueValidator(const.MAX_EVENT_LIMIT)],
         blank=False, null=False,)
+    unlimited = models.BooleanField(default=False)
     date = models.DateTimeField()
+    city = models.CharField(
+        max_length=const.MAX_CITY_LIMIT,
+        verbose_name='city of event',
+        blank=False, null=False, default='Москва')
     address = models.CharField(
         max_length=const.MAX_ADDRESS_LIMIT,
         verbose_name='adress title of event',
@@ -89,26 +93,3 @@ class Program(models.Model):
         related_name='programs',
         blank=True, null=True)
 
-
-class Favorites(models.Model):
-    user = models.ForeignKey(
-        User,
-        related_name="favorites",
-        on_delete=models.CASCADE)
-    event = models.ForeignKey(
-        Event,
-        related_name="favorites",
-        on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'favorites'
-        verbose_name_plural = 'favorites'
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'event'],
-                name="unique_events")
-        ]
-        ordering = ["-event"]
-
-    def __str__(self):
-        f"{self.user} favorites {self.event}"

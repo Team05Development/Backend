@@ -6,19 +6,19 @@ from django.utils import timezone
 from .models_event import Event
 
 
-class MultipleCharField(MultipleChoiceField):
-    def validate(self, _):
-        pass
+# class MultipleCharField(MultipleChoiceField):
+#     def validate(self, _):
+#         pass
 
 
-class MultipleCharFilter(MultipleChoiceFilter):
-    field_class = MultipleCharField
+# class MultipleCharFilter(MultipleChoiceFilter):
+#     field_class = MultipleCharField
 
 
 class EventFilter(django_filters.FilterSet):
-    title = django_filters.CharFilter(lookup_expr='icontains')
-    description = django_filters.CharFilter(lookup_expr='icontains')
-    address = MultipleCharFilter(field_name="address", lookup_expr="contains")
+    # title = django_filters.CharFilter(lookup_expr='icontains')
+    # address = MultipleCharFilter(field_name="address", lookup_expr="contains")
+    city = django_filters.CharFilter(method='filter_city')
     start_date = django_filters.DateTimeFilter(field_name='date', lookup_expr='gte')
     end_date = django_filters.DateTimeFilter(field_name='date', lookup_expr='lte')
     is_favorited = django_filters.NumberFilter(
@@ -31,13 +31,13 @@ class EventFilter(django_filters.FilterSet):
     formats = django_filters.CharFilter(method='filter_formats')
     status = django_filters.CharFilter(method='filter_status')
     
-    most_visited = django_filters.NumberFilter(
-        field_name='most_visited',
-        method='filter_most_visited')
+    delete_nearest = django_filters.NumberFilter(
+        field_name='delete_nearest',
+        method='filter_delete_nearest')
 
     class Meta:
         model = Event
-        fields = ('address',)
+        fields = ('city', )
 
     def filter_is_favorited(self, queryset, name, value):
         if value is not None:
@@ -48,7 +48,10 @@ class EventFilter(django_filters.FilterSet):
         if value is not None:
             return queryset.filter(is_applied=value)
         return queryset
-    
+
+    def filter_city(self, qs, name, value):
+        return qs.filter(city__in=self.request.GET.getlist('city'))
+
     def filter_direction(self, qs, name, value):
         return qs.filter(direction__slug__in=self.request.GET.getlist('direction'))
     
@@ -58,10 +61,10 @@ class EventFilter(django_filters.FilterSet):
     def filter_status(self, qs, name, value):
         return qs.filter(status__slug__in=self.request.GET.getlist('status'))
     
-    def filter_most_visited(self, queryset, name, value):
+    def filter_delete_nearest(self, queryset, name, value):
         if value is not None:
             now = timezone.now()
             queryset.filter(date__gte=now).order_by('date')
-            nearest_events_ids = queryset[:4].values('id')
-            return queryset.exclude(id__in=nearest_events_ids).order_by('-total_applications')[:value]
+            nearest_events_ids = queryset[:value].values('id')
+            return queryset.exclude(id__in=nearest_events_ids)
         return queryset

@@ -18,27 +18,28 @@ from .filters import EventFilter
 from .permissions import ReadOnly
 
 from . import constants as const
-from .models_event import (
-    Event, Favorites,)
+from .models_event import Event
+from .models_favorites import Favorites
 from .models_auxiliary import EventStatus
 from .models_application import Application
 
 from .serializers_event import (
-    EventSerializer, EventResponseSerializer)
+    EventPostSerializer, EventFullResponseSerializer, EventShortResponseSerializer)
 from .decorators import response_schema
 
 User = get_user_model()
 
-@response_schema(serializer=EventResponseSerializer)
+@response_schema(serializer=EventFullResponseSerializer)
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']
-    serializer_class = EventSerializer
+    # serializer_class = EventPostSerializer
     # permission_classes = (ReadOnly,)
     pagination_class = CustomPageNumberPagination
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
     filterset_class = EventFilter
-    ordering_fields = ('date',) 
+    search_fields = ('title', 'description') 
+    ordering_fields = ('date', 'total_applications', )
 
     # def get_permissions(self):
     #     if self.action in ['list', 'retrieve']:
@@ -49,17 +50,28 @@ class EventViewSet(viewsets.ModelViewSet):
     #         return (IsAuthorOrReadOnly(),)
     #     return (super().get_permissions())
      
+    serializer_classes = {
+        'list': EventShortResponseSerializer,
+        'create': EventPostSerializer,
+        'retrieve': EventFullResponseSerializer,
+        'update': EventPostSerializer,
+        'partial_update': EventPostSerializer,
+    }
+    default_serializer_class = EventShortResponseSerializer
+
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
 
     def get_queryset(self):
         user = self.request.user
         user_id = user.id if not user.is_anonymous else None
         queryset = Event.objects.all().prefetch_related('programs').annotate(
-            total_favorite=Count(
+            total_favorites=Count(
                 "favorites",
                 filter=Q(favorites__user_id=user_id)
             ),
             is_favorited=Case(
-                When(total_favorite__gte=1, then=True),
+                When(total_favorites__gte=1, then=True),
                 default=False,
                 output_field=BooleanField()
             )

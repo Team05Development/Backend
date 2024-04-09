@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models_event import Event, Program, Favorites
+from .models_event import Event, Program
+from .models_favorites import Favorites
 from .models_auxiliary import Direction, Format, EventStatus, ApplicationStatus
 from .models_application import Application
 

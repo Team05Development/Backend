@@ -120,9 +120,11 @@ class EventFullResponseSerializer(serializers.ModelSerializer):
     host = CustomUserSerializer()
     image = serializers.CharField(source='image.url')
     is_favorited = serializers.BooleanField(read_only=True)
+    total_favorite = serializers.IntegerField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
     total_applications = serializers.IntegerField(read_only=True)
+
     program = serializers.SerializerMethodField()
 
     class Meta:
@@ -131,7 +133,7 @@ class EventFullResponseSerializer(serializers.ModelSerializer):
             'id', 'admin', 'title', 'limit', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
-            'is_favorited', 'is_applied', 'application_status',
+            'is_favorited', 'total_favorite', 'is_applied', 'application_status',
             'total_applications', 'program')
         
     def get_program(self, instance):
@@ -142,6 +144,7 @@ class EventFullResponseSerializer(serializers.ModelSerializer):
 class EventShortResponseSerializer(serializers.ModelSerializer):
     """Short version of event"""
     is_favorited = serializers.BooleanField(read_only=True)
+    total_favorite = serializers.IntegerField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
     total_applications = serializers.IntegerField(read_only=True)
@@ -151,5 +154,5 @@ class EventShortResponseSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'title', 'date', 'city',
             'direction', 'description', 'format', 'status', 
-            'image', 'is_favorited', 'is_applied', 'application_status',
-            'total_applications')
+            'image', 'is_favorited', 'total_favorite', 'is_applied',
+            'application_status', 'total_applications')

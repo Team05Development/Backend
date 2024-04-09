@@ -62,7 +62,6 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
-
     def get_queryset(self):
         user = self.request.user
         user_id = user.id if not user.is_anonymous else None
@@ -90,12 +89,3 @@ class EventViewSet(viewsets.ModelViewSet):
         )
         queryset = queryset.annotate(application_status=F('applications__status__name'))
         return queryset.order_by('date')
-
-    # def retrieve(self, request, pk=None, store_pk=None, locker_pk=None):
-    #     # queryset = self.get_queryset()
-    #     serializer = EventFullResponseSerializer(self.queryset, context={'request': request})
-    #     # instance = self.get_object()
-    #     # serializer = EventFullResponseSerializer(instance, context={'request': request})
-    #     return Response(serializer.data)
-
-

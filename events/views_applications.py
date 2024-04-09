@@ -39,9 +39,14 @@ class ApplicationAPIview(APIView):
                 status=status.HTTP_400_BAD_REQUEST)
         status_id = request.data.get("status")
         if status_id is None:
-            status_obj, created = ApplicationStatus.objects.get_or_create(
-                slug=const.DEFAULT_APPLICATION_STATUS_SLUG,
-                name=const.DEFAULT_APPLICATION_STATUS_NAME)
+            if event.unlimited==False:
+                status_obj, created = ApplicationStatus.objects.get_or_create(
+                    slug=const.DEFAULT_APPLICATION_STATUS_SLUG,
+                    name=const.DEFAULT_APPLICATION_STATUS_NAME)
+            else:
+                status_obj, created = ApplicationStatus.objects.get_or_create(
+                    slug=const.UNLIMITED_APPLICATION_STATUS_SLUG,
+                    name=const.UNLIMITED_APPLICATION_STATUS_NAME)
         else:
             status_obj = get_object_or_404(ApplicationStatus, pk=status_id)
         application = Application.objects.create(

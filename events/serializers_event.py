@@ -38,7 +38,7 @@ class ProgramSerializer(serializers.ModelSerializer):
     
 
 
-class EventSerializer(serializers.ModelSerializer):
+class EventPostSerializer(serializers.ModelSerializer):
     admin = serializers.PrimaryKeyRelatedField(
         required=True,
         many=False,
@@ -112,7 +112,7 @@ class EventSerializer(serializers.ModelSerializer):
                 to_representation(instance))
 
 
-class EventResponseSerializer(serializers.ModelSerializer):
+class EventFullResponseSerializer(serializers.ModelSerializer):
     admin = CustomUserSerializer()
     direction = DirectionSerializer(many=True)
     format = FormatSerializer()
@@ -128,7 +128,7 @@ class EventResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'id', 'admin', 'title', 'limit', 'date', 'address',
+            'id', 'admin', 'title', 'limit', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
             'is_favorited', 'is_applied', 'application_status',
@@ -140,11 +140,16 @@ class EventResponseSerializer(serializers.ModelSerializer):
         return serializer.data
         
 class EventShortResponseSerializer(serializers.ModelSerializer):
-    """Short version for test purposes"""
+    """Short version of event"""
+    is_favorited = serializers.BooleanField(read_only=True)
+    is_applied = serializers.BooleanField(read_only=True)
+    application_status = serializers.CharField(read_only=True)
+    total_applications = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Event
         fields = (
-            'id', 'title', 'date', 'address',
+            'id', 'title', 'date', 'city',
             'direction', 'description', 'format', 'status', 
-            'image',)
+            'image', 'is_favorited', 'is_applied', 'application_status',
+            'total_applications')

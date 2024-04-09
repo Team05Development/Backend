@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 from .models_event import Event
 from .models_favorites import Favorites
-from .serializers_event import EventShortResponseSerializer
+from .serializers_event import EventShortResponseSerializer, EventFullResponseSerializer
 # from .permissions import ReadOnly, IsAuthorOrReadOnly, EventPermission
 
 User = get_user_model()
@@ -35,7 +35,7 @@ class FavoritesAPIView(APIView):
         else:
             Favorites.objects.create(user=user, event=event)
 
-        serializer = EventShortResponseSerializer(event)
+        serializer = EventFullResponseSerializer(event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):

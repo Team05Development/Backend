@@ -66,12 +66,12 @@ class EventViewSet(viewsets.ModelViewSet):
         user = self.request.user
         user_id = user.id if not user.is_anonymous else None
         queryset = Event.objects.all().prefetch_related('programs').annotate(
-            total_favorite=Count(
+            total_favorites=Count(
                 "favorites",
                 filter=Q(favorites__user_id=user_id)
             ),
             is_favorited=Case(
-                When(total_favorite__gte=1, then=True),
+                When(total_favorites__gte=1, then=True),
                 default=False,
                 output_field=BooleanField()
             )

@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from .models_application import Application
 from .models_event import Event
 from .models_auxiliary import ApplicationStatus
-from .serializers_application import ApplicationSerializer
+from .serializers_event import EventFullResponseSerializer
 from . import constants as const
 
 
@@ -54,7 +54,7 @@ class ApplicationAPIview(APIView):
             event=event,
             status=status_obj)
 
-        serializer = ApplicationSerializer(application)
+        serializer = EventFullResponseSerializer(event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
@@ -97,5 +97,5 @@ class ApplicationAPIview(APIView):
                     status=status.HTTP_400_BAD_REQUEST)
         application.status=status_obj
         application.save()
-        serializer = ApplicationSerializer(application)
+        serializer = EventFullResponseSerializer(event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

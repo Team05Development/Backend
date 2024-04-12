@@ -70,7 +70,7 @@ class EventPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'admin', 'title', 'limit', 'date', 'address',
+            'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording')
 
@@ -131,7 +131,7 @@ class EventFullResponseSerializer(
     class Meta:
         model = Event
         fields = (
-            'id', 'admin', 'title', 'limit', 'date', 'city', 'address',
+            'id', 'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
             'is_favorited', 'total_favorites', 'is_applied', 'application_status',

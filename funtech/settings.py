@@ -21,6 +21,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    '158.160.154.62'
     ]
 
 
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'events.apps.EventsConfig',
     'drf_spectacular',
+    'csv_import.apps.CsvImportConfig',
 ]
 
 MIDDLEWARE = [
@@ -75,25 +77,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'funtech.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'NAME': '/data/db.sqlite3',
-    }
-}
-
-# настройки для PostgreSQL
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRES_DB', 'django'),
-#         'USER': os.getenv('POSTGRES_USER', 'django'),
-#         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-#         'HOST': os.getenv('DB_HOST', ''),
-#         'PORT': os.getenv('DB_PORT', 5432)
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#         # 'NAME': '/data/db.sqlite3',
 #     }
 # }
+
+# настройки для PostgreSQL
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'funtech'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', 5432)
+    }
+}
 
 
 # Password validation
@@ -177,6 +179,8 @@ DJOSER = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
+    'http://158.160.154.62',
+    'http://funtech.work.gd'
 ]
 
 
@@ -187,3 +191,10 @@ SPECTACULAR_SETTINGS = {
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
 }
+
+DJANGO_SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin1@mail.ru')
+DJANGO_SUPERUSER_PASSWORD = os.getenv('DJANGO_SUPERUSER_PASSWORD', '1234')
+DJANGO_SUPERUSER_FIRST_NAME = os.getenv(
+    'DJANGO_SUPERUSER_FIRST_NAME',
+    'admin1')
+DJANGO_SUPERUSER_LAST_NAME = os.getenv('DJANGO_SUPERUSER_LAST_NAME', 'admin1')

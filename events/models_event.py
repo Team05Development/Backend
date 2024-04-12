@@ -21,9 +21,9 @@ class Event(models.Model):
     limit = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0),
                     MaxValueValidator(const.MAX_EVENT_LIMIT)],
-        blank=False, null=False,)
+        blank=True, null=True,)
     unlimited = models.BooleanField(default=False)
-    date = models.DateTimeField()
+    date = models.DateField()
     city = models.CharField(
         max_length=const.MAX_CITY_LIMIT,
         verbose_name='city of event',

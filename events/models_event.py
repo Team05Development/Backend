@@ -28,11 +28,11 @@ class Event(models.Model):
     city = models.CharField(
         max_length=const.MAX_CITY_LIMIT,
         verbose_name='city of event',
-        blank=False, null=False, default='Москва')
+        blank=True, null=True)
     address = models.CharField(
         max_length=const.MAX_ADDRESS_LIMIT,
         verbose_name='adress title of event',
-        blank=False, null=False)
+        blank=True, null=True)
     direction = models.ManyToManyField(
         Direction, related_name='events', blank=True,
         verbose_name='directions')

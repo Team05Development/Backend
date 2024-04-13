@@ -62,6 +62,6 @@ class DayOfWeekSerializerMixin(serializers.Serializer):
         fields = ('day_of_week', )
 
     def get_day_of_week(self, obj):
-        locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+        locale.setlocale(locale.LC_ALL, 'ru_RU.utf8')
         date = obj.date
         return date.strftime('%a')

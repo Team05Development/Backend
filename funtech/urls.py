@@ -22,6 +22,7 @@ router.register(r'events', EventViewSet, basename="event")
 
 
 urlpatterns = [
+    path('api/', include("rest_framework.urls")),  
     path('api/', include(router.urls)),
     path('api/events/<int:pk>/favorite/', FavoritesAPIView.as_view()),
     path('api/events/<int:pk>/application/', ApplicationAPIview.as_view()),

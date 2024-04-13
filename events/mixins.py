@@ -1,3 +1,6 @@
+import calendar
+import locale
+
 from rest_framework import serializers
 
 from .models_application import Application
@@ -51,28 +54,14 @@ class FavoritesSerializerMixin(serializers.Serializer):
             filter(event=obj).count())
         return total_favorites
     
-    
 
-        # queryset = Event.objects.all().prefetch_related('programs').annotate(
-        #     total_favorites=Count(
-        #         "favorites",
-        #         filter=Q(favorites__user_id=user_id)
-        #     ),
-        #     is_favorited=Case(
-        #         When(total_favorite__gte=1, then=True),
-        #         default=False,
-        #         output_field=BooleanField()
-        #     )
-        # )
-        # queryset = queryset.annotate(
-        #     total_applications=Count(
-        #         "applications",
-        #         filter=Q(applications__user_id=user_id)
-        #     ),
-        #     is_applied=Case(
-        #         When(total_applications__gte=1, then=True),
-        #         default=False,
-        #         output_field=BooleanField()
-        #     )
-        # )
-        # queryset = queryset.annotate(application_status=F('applications__status__name'))
+class DayOfWeekSerializerMixin(serializers.Serializer):
+    day_of_week = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ('day_of_week', )
+    
+    def get_day_of_week(self, obj):
+        locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
+        date = obj.date
+        return date.strftime('%a')

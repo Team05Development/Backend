@@ -8,9 +8,16 @@ User = get_user_model()
 
 class CustomUserSerializer(UserSerializer):
     direction = DirectionSerializer(many=True)
+    image = serializers.SerializerMethodField()
 
     class Meta(UserSerializer.Meta):
         fields = (
-            'id', 'email', 'first_name', 'last_name',
-            'phone_number', 'job', 'job_title',
+            'id', 'email', 'first_name', 'last_name', 'middle_name',
+            'phone_number', 'telegram', 'job', 'job_title',
             'experience', 'direction', 'image')
+        
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        else:
+            return obj.image.url

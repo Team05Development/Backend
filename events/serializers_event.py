@@ -1,4 +1,5 @@
 import base64
+import calendar
 
 from rest_framework.response import Response
 from django.core.files.base import ContentFile
@@ -14,7 +15,7 @@ from .serializers_auxiliary import (
     FormatSerializer,
     EventStatusSerializer)
 from . import constants as const
-from .mixins import ApplicationSerializerMixin, FavoritesSerializerMixin
+from .mixins import ApplicationSerializerMixin, FavoritesSerializerMixin, DayOfWeekSerializerMixin
 
 User = get_user_model()
 
@@ -67,13 +68,14 @@ class EventPostSerializer(serializers.ModelSerializer):
         queryset=User.objects.all(),
         read_only=False)
 
+
     class Meta:
         model = Event
         fields = (
             'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording')
-
+        
     def validate_direction(self, value):
         if len(value) == 0:
             raise serializers.ValidationError('Это поле обязательное')
@@ -116,7 +118,8 @@ class EventPostSerializer(serializers.ModelSerializer):
 class EventFullResponseSerializer(
     serializers.ModelSerializer,
     ApplicationSerializerMixin,
-    FavoritesSerializerMixin):
+    FavoritesSerializerMixin,
+    DayOfWeekSerializerMixin):
     """Full version of event with all fields"""
 
     admin = CustomUserSerializer()
@@ -124,41 +127,55 @@ class EventFullResponseSerializer(
     format = FormatSerializer()
     status = EventStatusSerializer()
     host = CustomUserSerializer()
-    image = serializers.CharField(source='image.url')
+    # image = serializers.CharField(source='image.url', default=None)
+    image = serializers.SerializerMethodField()
 
     program = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = (
-            'id', 'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
+            'id', 'admin', 'title', 'limit', 'unlimited', 'date', 'time', 'day_of_week', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording',
             'is_favorited', 'total_favorites', 'is_applied', 'application_status',
             'total_applications', 'program')
         
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        else:
+            return obj.image.url
+    
     def get_program(self, instance):
         program = Program.objects.filter(event__id=instance.id).order_by('date_time')
         serializer = ProgramSerializer(program, many=True)
         return serializer.data
         
-class EventShortResponseSerializer(serializers.ModelSerializer):
+class EventShortResponseSerializer(serializers.ModelSerializer, DayOfWeekSerializerMixin):
     """Short version of event with a subset of fields"""
     
     direction = DirectionSerializer(many=True)
     format = FormatSerializer()
     status = EventStatusSerializer()
-    image = serializers.CharField(source='image.url')
+    # image = serializers.CharField(source='image.url', default=None)
+    image = serializers.SerializerMethodField()
     is_favorited = serializers.BooleanField(read_only=True)
     total_favorites = serializers.IntegerField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
     total_applications = serializers.IntegerField(read_only=True)
 
+    def get_image(self, obj):
+        if not obj.image:
+            None
+        else:
+            return obj.image.url
+
     class Meta:
         model = Event
         fields = (
-            'id', 'title', 'date', 'city',
+            'id', 'title', 'date', 'time', 'day_of_week', 'city',
             'direction', 'description', 'format', 'status', 
             'image',  'is_favorited', 'total_favorites', 'is_applied',
             'application_status', 'total_applications', )

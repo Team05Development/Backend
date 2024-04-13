@@ -23,7 +23,8 @@ class Event(models.Model):
                     MaxValueValidator(const.MAX_EVENT_LIMIT)],
         blank=True, null=True,)
     unlimited = models.BooleanField(default=False)
-    date = models.DateField()
+    date = models.DateField(blank=True, null=True)
+    time = models.TimeField()
     city = models.CharField(
         max_length=const.MAX_CITY_LIMIT,
         verbose_name='city of event',
@@ -63,6 +64,14 @@ class Event(models.Model):
         max_length=const.MAX_LINK_LIMIT,
         verbose_name='event recording',
         blank=True, null=True)
+    
+    @property
+    def get_image_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        else:
+            return None
+
     
     class Meta:
         ordering = ['-date']

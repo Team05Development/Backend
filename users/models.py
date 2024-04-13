@@ -42,7 +42,11 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     username = None
+    first_name = models.CharField(_('first name'), max_length=150, blank=True)
+    middle_name = models.CharField(blank=True, max_length=256)
+    last_name = models.CharField(_('last name'), max_length=150, blank=True)
     email = models.EmailField(_('email address'), unique=True)
+    
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -51,6 +55,7 @@ class CustomUser(AbstractUser):
 
     phone_number_regex = RegexValidator(regex = r"^\+?1?\d{8,15}$")
     phone_number = models.CharField(validators=[phone_number_regex], max_length=16, unique=True)
+    telegram = models.CharField(blank=True, max_length=128)
     job = models.CharField(blank=True, max_length=256)
     job_title = models.CharField(blank=True, max_length=256)
     experience = models.CharField(blank=True, max_length=128)

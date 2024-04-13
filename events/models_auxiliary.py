@@ -1,6 +1,7 @@
 from django.db import models
 from . import constants as const
 
+
 class Direction(models.Model):
     name = models.CharField(
         max_length=const.MAX_NAME_LIMIT,
@@ -20,7 +21,7 @@ class Direction(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Format(models.Model):
     name = models.CharField(
@@ -41,7 +42,7 @@ class Format(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class EventStatus(models.Model):
     name = models.CharField(
@@ -62,7 +63,7 @@ class EventStatus(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class ApplicationStatus(models.Model):
     name = models.CharField(

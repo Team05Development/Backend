@@ -1,9 +1,6 @@
-from datetime import datetime
-
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.generics import CreateAPIView, ListAPIView
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
@@ -23,7 +20,7 @@ class ApplicationAPIview(APIView):
     Add or remove application to event.
     """
     # permission_classes = (IsAuthenticated, )
-    
+
     def post(self, request, pk):
         self.check_permissions(request)
         user = request.user
@@ -39,7 +36,7 @@ class ApplicationAPIview(APIView):
                 status=status.HTTP_400_BAD_REQUEST)
         status_id = request.data.get("status")
         if status_id is None:
-            if event.unlimited==False:
+            if event.unlimited is False:
                 status_obj, created = ApplicationStatus.objects.get_or_create(
                     slug=const.DEFAULT_APPLICATION_STATUS_SLUG,
                     name=const.DEFAULT_APPLICATION_STATUS_NAME)
@@ -49,12 +46,10 @@ class ApplicationAPIview(APIView):
                     name=const.UNLIMITED_APPLICATION_STATUS_NAME)
         else:
             status_obj = get_object_or_404(ApplicationStatus, pk=status_id)
-        application = Application.objects.create(
-            user=user,
-            event=event,
-            status=status_obj)
+        Application.objects.create(user=user, event=event, status=status_obj)
 
-        serializer = EventFullResponseSerializer(event, context={'request': request})
+        serializer = EventFullResponseSerializer(
+            event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def delete(self, request, pk):
@@ -68,7 +63,7 @@ class ApplicationAPIview(APIView):
                 {'детали': 'Заявки нет'},
                 status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
     def put(self, request, pk):
         self.check_permissions(request)
         user = request.user
@@ -92,10 +87,11 @@ class ApplicationAPIview(APIView):
         try:
             status_obj = ApplicationStatus.objects.get(pk=status_id)
         except ApplicationStatus.DoesNotExist:
-                return Response(
-                    {'детали': 'Такого статуса не существует'},
-                    status=status.HTTP_400_BAD_REQUEST)
-        application.status=status_obj
+            return Response(
+                {'детали': 'Такого статуса не существует'},
+                status=status.HTTP_400_BAD_REQUEST)
+        application.status = status_obj
         application.save()
-        serializer = EventFullResponseSerializer(event, context={'request': request})
+        serializer = EventFullResponseSerializer(
+            event, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)

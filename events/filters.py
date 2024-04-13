@@ -1,26 +1,15 @@
 import django_filters
-from django_filters import MultipleChoiceFilter
-from django_filters.fields import MultipleChoiceField
 from django.utils import timezone
 
 from .models_event import Event
 
 
-# class MultipleCharField(MultipleChoiceField):
-#     def validate(self, _):
-#         pass
-
-
-# class MultipleCharFilter(MultipleChoiceFilter):
-#     field_class = MultipleCharField
-
-
 class EventFilter(django_filters.FilterSet):
-    # title = django_filters.CharFilter(lookup_expr='icontains')
-    # address = MultipleCharFilter(field_name="address", lookup_expr="contains")
     city = django_filters.CharFilter(method='filter_city')
-    start_date = django_filters.DateTimeFilter(field_name='date', lookup_expr='gte')
-    end_date = django_filters.DateTimeFilter(field_name='date', lookup_expr='lte')
+    start_date = django_filters.DateTimeFilter(
+        field_name='date', lookup_expr='gte')
+    end_date = django_filters.DateTimeFilter(
+        field_name='date', lookup_expr='lte')
     is_favorited = django_filters.NumberFilter(
         field_name='is_favorited',
         method='filter_is_favorited')
@@ -30,7 +19,7 @@ class EventFilter(django_filters.FilterSet):
     direction = django_filters.CharFilter(method='filter_direction')
     formats = django_filters.CharFilter(method='filter_formats')
     status = django_filters.CharFilter(method='filter_status')
-    
+
     delete_nearest = django_filters.NumberFilter(
         field_name='delete_nearest',
         method='filter_delete_nearest')
@@ -53,14 +42,15 @@ class EventFilter(django_filters.FilterSet):
         return qs.filter(city__in=self.request.GET.getlist('city'))
 
     def filter_direction(self, qs, name, value):
-        return qs.filter(direction__slug__in=self.request.GET.getlist('direction'))
-    
+        return qs.filter(
+            direction__slug__in=self.request.GET.getlist('direction'))
+
     def filter_formats(self, qs, name, value):
         return qs.filter(format__slug__in=self.request.GET.getlist('formats'))
-    
+
     def filter_status(self, qs, name, value):
         return qs.filter(status__slug__in=self.request.GET.getlist('status'))
-    
+
     def filter_delete_nearest(self, queryset, name, value):
         if value is not None:
             now = timezone.now()

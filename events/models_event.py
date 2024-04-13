@@ -64,15 +64,7 @@ class Event(models.Model):
         max_length=const.MAX_LINK_LIMIT,
         verbose_name='event recording',
         blank=True, null=True)
-    
-    @property
-    def get_image_url(self):
-        if self.image and hasattr(self.image, 'url'):
-            return self.image.url
-        else:
-            return None
 
-    
     class Meta:
         ordering = ['-date']
         verbose_name = 'event'
@@ -80,7 +72,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 
 class Program(models.Model):
     event = models.ForeignKey(
@@ -101,4 +93,3 @@ class Program(models.Model):
         on_delete=models.SET_NULL,
         related_name='programs',
         blank=True, null=True)
-

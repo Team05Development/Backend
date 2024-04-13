@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models_auxiliary import Direction, Format, EventStatus, ApplicationStatus
 
+
 class DirectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Direction

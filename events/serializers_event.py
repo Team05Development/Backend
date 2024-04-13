@@ -1,10 +1,8 @@
 import base64
 
-from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
 
 from .models_event import Event, Program
 from .models_auxiliary import Direction, Format, EventStatus
@@ -13,8 +11,10 @@ from .serializers_auxiliary import (
     DirectionSerializer,
     FormatSerializer,
     EventStatusSerializer)
-from . import constants as const
-from .mixins import ApplicationSerializerMixin, FavoritesSerializerMixin
+from .mixins import (
+    ApplicationSerializerMixin,
+    FavoritesSerializerMixin,
+    DayOfWeekSerializerMixin)
 
 User = get_user_model()
 
@@ -32,11 +32,11 @@ class Base64ImageField(serializers.ImageField):
 
 class ProgramSerializer(serializers.ModelSerializer):
     speaker = CustomUserSerializer()
+
     class Meta:
         model = Program
         fields = (
             'section', 'date_time', 'description', 'speaker')
-    
 
 
 class EventPostSerializer(serializers.ModelSerializer):
@@ -70,7 +70,7 @@ class EventPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'admin', 'title', 'limit', 'date', 'address',
+            'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording')
 
@@ -78,7 +78,8 @@ class EventPostSerializer(serializers.ModelSerializer):
         if len(value) == 0:
             raise serializers.ValidationError('Это поле обязательное')
         if len(value) != len(set([direction.id for direction in value])):
-            raise serializers.ValidationError('Направления должны быть уникальными')
+            raise serializers.ValidationError(
+                'Направления должны быть уникальными')
         return value
 
     def create(self, validated_data):
@@ -97,9 +98,11 @@ class EventPostSerializer(serializers.ModelSerializer):
         instance.format = validated_data.get('format', instance.format)
         instance.status = validated_data.get('status', instance.status)
         instance.image = validated_data.get('image', instance.image)
-        instance.presentation = validated_data.get('presentation', instance.presentation)
-        instance.recording = validated_data.get('recording', instance.recording)
-        
+        instance.presentation = validated_data.get(
+            'presentation', instance.presentation)
+        instance.recording = validated_data.get(
+            'recording', instance.recording)
+
         if 'direction' in validated_data:
             directions = validated_data.pop('direction')
             instance.direction.clear()
@@ -113,10 +116,10 @@ class EventPostSerializer(serializers.ModelSerializer):
                 to_representation(instance))
 
 
-class EventFullResponseSerializer(
-    serializers.ModelSerializer,
-    ApplicationSerializerMixin,
-    FavoritesSerializerMixin):
+class EventFullResponseSerializer(serializers.ModelSerializer,
+                                  ApplicationSerializerMixin,
+                                  FavoritesSerializerMixin,
+                                  DayOfWeekSerializerMixin):
     """Full version of event with all fields"""
 
     admin = CustomUserSerializer()
@@ -124,41 +127,59 @@ class EventFullResponseSerializer(
     format = FormatSerializer()
     status = EventStatusSerializer()
     host = CustomUserSerializer()
-    image = serializers.CharField(source='image.url')
+    # image = serializers.CharField(source='image.url', default=None)
+    image = serializers.SerializerMethodField()
 
     program = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = (
-            'id', 'admin', 'title', 'limit', 'date', 'city', 'address',
+            'id', 'admin', 'title', 'limit', 'unlimited', 'date',
+            'time', 'day_of_week', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
-            'image', 'presentation', 'recording',
-            'is_favorited', 'total_favorites', 'is_applied', 'application_status',
+            'image', 'presentation', 'recording', 'is_favorited',
+            'total_favorites', 'is_applied', 'application_status',
             'total_applications', 'program')
-        
+
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        else:
+            return obj.image.url
+
     def get_program(self, instance):
-        program = Program.objects.filter(event__id=instance.id).order_by('date_time')
+        program = Program.objects.filter(event__id=instance.id).\
+            order_by('date_time')
         serializer = ProgramSerializer(program, many=True)
         return serializer.data
-        
-class EventShortResponseSerializer(serializers.ModelSerializer):
+
+
+class EventShortResponseSerializer(serializers.ModelSerializer,
+                                   DayOfWeekSerializerMixin):
     """Short version of event with a subset of fields"""
-    
+
     direction = DirectionSerializer(many=True)
     format = FormatSerializer()
     status = EventStatusSerializer()
-    image = serializers.CharField(source='image.url')
+    # image = serializers.CharField(source='image.url', default=None)
+    image = serializers.SerializerMethodField()
     is_favorited = serializers.BooleanField(read_only=True)
     total_favorites = serializers.IntegerField(read_only=True)
     is_applied = serializers.BooleanField(read_only=True)
     application_status = serializers.CharField(read_only=True)
     total_applications = serializers.IntegerField(read_only=True)
 
+    def get_image(self, obj):
+        if not obj.image:
+            None
+        else:
+            return obj.image.url
+
     class Meta:
         model = Event
         fields = (
-            'id', 'title', 'date', 'city',
-            'direction', 'description', 'format', 'status', 
+            'id', 'title', 'date', 'time', 'day_of_week', 'city',
+            'direction', 'description', 'format', 'status',
             'image',  'is_favorited', 'total_favorites', 'is_applied',
             'application_status', 'total_applications', )

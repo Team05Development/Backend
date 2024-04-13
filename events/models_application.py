@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from . import constants as const
 from .models_event import Event
 from .models_auxiliary import ApplicationStatus
 
 User = get_user_model()
+
 
 class Application(models.Model):
     user = models.ForeignKey(

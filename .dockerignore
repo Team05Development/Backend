@@ -1,0 +1,9 @@
+venv
+.git
+.idea
+.vscode
+.env
+db.sqlite3
+.sqlite3
+Dockerfile
+Dockerfile.production

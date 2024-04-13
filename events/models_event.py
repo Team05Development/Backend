@@ -21,17 +21,18 @@ class Event(models.Model):
     limit = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0),
                     MaxValueValidator(const.MAX_EVENT_LIMIT)],
-        blank=False, null=False,)
+        blank=True, null=True,)
     unlimited = models.BooleanField(default=False)
-    date = models.DateTimeField()
+    date = models.DateField(blank=True, null=True)
+    time = models.TimeField()
     city = models.CharField(
         max_length=const.MAX_CITY_LIMIT,
         verbose_name='city of event',
-        blank=False, null=False, default='Москва')
+        blank=True, null=True)
     address = models.CharField(
         max_length=const.MAX_ADDRESS_LIMIT,
         verbose_name='adress title of event',
-        blank=False, null=False)
+        blank=True, null=True)
     direction = models.ManyToManyField(
         Direction, related_name='events', blank=True,
         verbose_name='directions')
@@ -63,7 +64,7 @@ class Event(models.Model):
         max_length=const.MAX_LINK_LIMIT,
         verbose_name='event recording',
         blank=True, null=True)
-    
+
     class Meta:
         ordering = ['-date']
         verbose_name = 'event'
@@ -71,7 +72,7 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
-    
+
 
 class Program(models.Model):
     event = models.ForeignKey(
@@ -92,4 +93,3 @@ class Program(models.Model):
         on_delete=models.SET_NULL,
         related_name='programs',
         blank=True, null=True)
-

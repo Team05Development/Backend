@@ -22,7 +22,8 @@ router.register(r'events', EventViewSet, basename="event")
 
 
 urlpatterns = [
-    path('api/', include("rest_framework.urls")),  
+    path('api-auth/', include("rest_framework.urls")),  
+    # url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework"))
     path('api/', include(router.urls)),
     path('api/events/<int:pk>/favorite/', FavoritesAPIView.as_view()),
     path('api/events/<int:pk>/application/', ApplicationAPIview.as_view()),

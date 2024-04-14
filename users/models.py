@@ -60,7 +60,7 @@ class CustomUser(AbstractUser):
     phone_number_regex = RegexValidator(regex=r"^\+?1?\d{8,15}$")
     phone_number = models.CharField(
         validators=[phone_number_regex],
-        max_length=16, unique=True)
+        max_length=16, unique=True, blank=True)
     telegram = models.CharField(blank=True, max_length=128)
     job = models.CharField(blank=True, max_length=256)
     job_title = models.CharField(blank=True, max_length=256)

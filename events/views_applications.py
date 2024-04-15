@@ -1,3 +1,6 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiExample
+from drf_spectacular.types import OpenApiTypes
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
@@ -9,12 +12,52 @@ from .models_application import Application
 from .models_event import Event
 from .models_auxiliary import ApplicationStatus
 from .serializers_event import EventFullResponseSerializer
+from .serializers_auxiliary import ApplicationStatusSerializer
 from . import constants as const
 
 
 User = get_user_model()
 
-
+@extend_schema(tags=["Application"],
+               responses=EventFullResponseSerializer
+               )
+@extend_schema_view(
+    post=extend_schema(
+            summary="Send application for event",
+            description="""When send with no payload assigns default status.
+            If event unlimited=True then default status is 'approved'.
+            If event unlimited=False then default status is 'sent'.""",
+        examples=[
+            OpenApiExample(
+                "Application example with explicit status",
+                    description="Payload example for creating application with explicit status.",
+                    value=
+                    {
+                        "status": 1
+                    },
+                    status_codes=[str(status.HTTP_200_OK)],
+                ),
+            ],
+        ),
+    put=extend_schema(
+        summary="Change status for send application",
+        examples=[
+            OpenApiExample(
+                "Update application status example",
+                    description="Payload example for updating application status.",
+                    value=
+                    {
+                        "status": 1
+                    },
+                    status_codes=[str(status.HTTP_200_OK)],
+                ),
+            ],
+        
+    ),
+    delete=extend_schema(
+            summary="Delete application for event",
+        ),
+)
 class ApplicationAPIview(APIView):
     """
     Add or remove application to event.

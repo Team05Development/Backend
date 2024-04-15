@@ -1,5 +1,8 @@
 import base64
 
+from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.types import OpenApiTypes
+
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -41,7 +44,7 @@ class ProgramSerializer(serializers.ModelSerializer):
 
 class EventPostSerializer(serializers.ModelSerializer):
     admin = serializers.PrimaryKeyRelatedField(
-        required=True,
+        required=False,
         many=False,
         queryset=User.objects.all(),
         read_only=False)
@@ -62,7 +65,7 @@ class EventPostSerializer(serializers.ModelSerializer):
         queryset=EventStatus.objects.all(),
         read_only=False)
     host = serializers.PrimaryKeyRelatedField(
-        required=True,
+        required=False,
         many=False,
         queryset=User.objects.all(),
         read_only=False)
@@ -70,7 +73,7 @@ class EventPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'admin', 'title', 'limit', 'unlimited', 'date', 'city', 'address',
+            'admin', 'title', 'limit', 'unlimited', 'date', 'time', 'city', 'address',
             'direction', 'description', 'format', 'status', 'host',
             'image', 'presentation', 'recording')
 
@@ -94,6 +97,7 @@ class EventPostSerializer(serializers.ModelSerializer):
         instance.title = validated_data.get('title', instance.title)
         instance.limit = validated_data.get('text', instance.limit)
         instance.date = validated_data.get('date', instance.date)
+        instance.time = validated_data.get('time', instance.time)
         instance.address = validated_data.get('address', instance.address)
         instance.format = validated_data.get('format', instance.format)
         instance.status = validated_data.get('status', instance.status)
@@ -127,7 +131,6 @@ class EventFullResponseSerializer(serializers.ModelSerializer,
     format = FormatSerializer()
     status = EventStatusSerializer()
     host = CustomUserSerializer()
-    # image = serializers.CharField(source='image.url', default=None)
     image = serializers.SerializerMethodField()
 
     program = serializers.SerializerMethodField()
@@ -147,7 +150,8 @@ class EventFullResponseSerializer(serializers.ModelSerializer,
             return None
         else:
             return obj.image.url
-
+    
+    @extend_schema_field(ProgramSerializer)
     def get_program(self, instance):
         program = Program.objects.filter(event__id=instance.id).\
             order_by('date_time')
@@ -162,7 +166,6 @@ class EventShortResponseSerializer(serializers.ModelSerializer,
     direction = DirectionSerializer(many=True)
     format = FormatSerializer()
     status = EventStatusSerializer()
-    # image = serializers.CharField(source='image.url', default=None)
     image = serializers.SerializerMethodField()
     is_favorited = serializers.BooleanField(read_only=True)
     total_favorites = serializers.IntegerField(read_only=True)

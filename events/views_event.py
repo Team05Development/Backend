@@ -1,5 +1,8 @@
+from drf_spectacular.utils import extend_schema, extend_schema_view
+
 from rest_framework import viewsets
 from rest_framework import filters
+from rest_framework import status
 # from rest_framework.permissions import IsAuthenticated, AllowAny
 
 from django.db.models import F, Count, Q, Case, When, BooleanField
@@ -15,12 +18,37 @@ from .serializers_event import (
     EventPostSerializer,
     EventFullResponseSerializer,
     EventShortResponseSerializer)
-from .decorators import response_schema
 
 User = get_user_model()
 
 
-@response_schema(serializer=EventFullResponseSerializer)
+@extend_schema(tags=["Events"])
+@extend_schema_view(
+    list=extend_schema(
+            summary="Show list of events with short description",
+        ),
+    create=extend_schema(
+        summary="Create new event",
+        responses={
+            status.HTTP_200_OK: EventFullResponseSerializer,
+        },
+    ),
+    retrieve=extend_schema(
+            summary="Show full description of event (with program)",
+            responses={
+            status.HTTP_200_OK: EventFullResponseSerializer,
+        },
+        ),
+    partial_update=extend_schema(
+            summary="Update info about event",
+            responses={
+            status.HTTP_200_OK: EventFullResponseSerializer,
+        },
+        ),
+    destroy=extend_schema(
+            summary="Delete event",
+        ),
+)
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']

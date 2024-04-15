@@ -170,11 +170,11 @@ DJOSER = {
     #     'user': ['users.permissions.MeIsAuthenticated'],
     #     'user_list': ['rest_framework.permissions.AllowAny'],
     # },
-    # # 'SERIALIZERS': {
-    # #     'user_create': 'users.serializers.CustomUserCreateSerializer',
-    # #     'user': 'users.serializers.CustomUserSerializer',
-    # #     'current_user': 'users.serializers.CustomUserSerializer',
-    # }
+    'SERIALIZERS': {
+        # 'user_create': 'users.serializers.CustomUserCreateSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
+    }
 }
 
 CORS_ALLOWED_ORIGINS = [
@@ -190,7 +190,7 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API for IT events website',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    "COMPONENT_SPLIT_REQUEST": True
+    'COMPONENT_SPLIT_REQUEST': True
 }
 
 DJANGO_SUPERUSER_EMAIL = os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin1@mail.ru')

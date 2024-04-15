@@ -1,4 +1,8 @@
 # API for Funtech - website of IT events
+* Available at [Yandex cloud server](http://158.160.154.62/api/events/)
+* and also at [funtech.work.gd](http://funtech.work.gd/api/events/).
+* [API documentation](http://158.160.154.62/api/schema/redoc/).
+
 Authors:
 * beluza-n (Teamlead)
 * Sobiyk
@@ -12,6 +16,7 @@ Administration through django admin panel. Admin can manage events, accept appli
 * Python
 * Django Rest Framework
 * djoser
+* PostgreSQL
 
 ### How to run the project:
 Clone repository and go to it with the terminal::
@@ -59,7 +64,7 @@ python manage.py runserver
 ```
 
 ### API documentation
-You can find requests and responses in the API documentation:
+You can find request and response examples in the API documentation.
 Download yaml-file:
 
 ```

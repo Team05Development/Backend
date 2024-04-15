@@ -1,62 +1,79 @@
-### Как запустить проект:
+# API for Funtech - website of IT events
+Authors:
+* beluza-n (Teamlead)
+* Sobiyk
 
-Клонировать репозиторий и перейти в него в командной строке:
+## Desicription
+Created during Hackaton+ Funtech at Yandex Practicum. Uses Django Rest Framework. Uses PostgreSQL as database.
+The project collects IT events. User can register, send application to events, add events to favorites.
+Administration through django admin panel. Admin can manage events, accept application of users.
+
+## Stack:
+* Python
+* Django Rest Framework
+* djoser
+
+### How to run the project:
+Clone repository and go to it with the terminal::
 
 ```
-git clone https://github.com/Team05Development/Backend.git
+git clone git@github.com:Team05Development/Backend.git
 ```
 
 ```
 cd Backend
 ```
 
-Cоздать и активировать виртуальное окружение:
+Create and activate virtual environment:
 
 ```
-python3 -m venv env
+python -m venv venv
 ```
 
-* Если у вас Linux/macOS
+```
+source venv/Scripts/activate
+```
 
-    ```
-    source env/bin/activate
-    ```
-
-* Если у вас windows
-
-    ```
-    source env/Scripts/activate
-    ```
+Update pip (optional):
 
 ```
 python -m pip install --upgrade pip
 ```
 
-Установить зависимости из файла requirements.txt:
+Install dependencies from the requirements.txt:
 
 ```
 pip install -r requirements.txt
 ```
 
-Выполнить миграции:
+Run migrations:
 
 ```
 python manage.py migrate
 ```
-Создать суперпользователя:
 
-```
-python manage.py createsuperuser
-```
-
-Загрузить из фикстур списки с базу данных:
-
-```
-python manage.py loaddata events-lists.json
-```
-
-Запустить проект:
+Launch the Django project:
 
 ```
 python manage.py runserver
+```
+
+### API documentation
+You can find requests and responses in the API documentation:
+Download yaml-file:
+
+```
+/api/schema/
+```
+
+Swagger documentation:
+
+```
+/api/schema/swagger-ui/
+```
+
+Redoc documentation:
+
+```
+/api/schema/redoc/
 ```

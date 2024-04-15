@@ -14,7 +14,16 @@ from django.conf.urls.static import static
 from events.views_event import EventViewSet
 from events.views_applications import ApplicationAPIview
 from events.views_favorites import FavoritesAPIView
-# from events.views_auxiliary import DirectionAPIView
+from events.views_auxiliary import (
+    ListDirectionAPIView,
+    RetrieveDirectionAPIView,
+    ListFormatAPIView,
+    RetrieveFormatAPIView,
+    ListEventStatusAPIView,
+    RetrieveEventStatusAPIView,
+    ListApplicationStatusAPIView,
+    RetrieveApplicationStatusAPIView
+    )
 
 
 router = routers.DefaultRouter()
@@ -23,15 +32,26 @@ router.register(r'events', EventViewSet, basename="event")
 
 urlpatterns = [
     path('api-auth/', include("rest_framework.urls")),  
-    # url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework"))
+
     path('api/', include(router.urls)),
     path('api/events/<int:pk>/favorite/', FavoritesAPIView.as_view()),
     path('api/events/<int:pk>/application/', ApplicationAPIview.as_view()),
-    # path('api/direction/<int:pk>/', DirectionAPIView.as_view()),
-    # path('api/direction/', DirectionAPIView.as_view()),
+    
+    path('api/direction/<int:pk>/', RetrieveDirectionAPIView.as_view()),
+    path('api/direction/', ListDirectionAPIView.as_view()),
+
+    path('api/format/<int:pk>/', RetrieveFormatAPIView.as_view()),
+    path('api/format/', ListFormatAPIView.as_view()),
+
+    path('api/eventstatus/<int:pk>/', RetrieveEventStatusAPIView.as_view()),
+    path('api/eventstatus/', ListEventStatusAPIView.as_view()),
+
+    path('api/applicationstatus/<int:pk>/', RetrieveApplicationStatusAPIView.as_view()),
+    path('api/applicationstatus/', ListApplicationStatusAPIView.as_view()),
+
     path('admin/', admin.site.urls),
-    # path('api/', include('djoser.urls')),
-    # path('api/auth/', include('djoser.urls.authtoken')),
+    path('api/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.authtoken')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(

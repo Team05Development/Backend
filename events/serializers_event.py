@@ -1,7 +1,6 @@
 import base64
 
 from drf_spectacular.utils import extend_schema_field
-from drf_spectacular.types import OpenApiTypes
 
 from django.core.files.base import ContentFile
 from rest_framework import serializers
@@ -73,9 +72,9 @@ class EventPostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = (
-            'admin', 'title', 'limit', 'unlimited', 'date', 'time', 'city', 'address',
-            'direction', 'description', 'format', 'status', 'host',
-            'image', 'presentation', 'recording')
+            'admin', 'title', 'limit', 'unlimited', 'date', 'time',
+            'city', 'address', 'direction', 'description', 'format',
+            'status', 'host', 'image', 'presentation', 'recording')
 
     def validate_direction(self, value):
         if len(value) == 0:
@@ -150,7 +149,7 @@ class EventFullResponseSerializer(serializers.ModelSerializer,
             return None
         else:
             return obj.image.url
-    
+
     @extend_schema_field(ProgramSerializer)
     def get_program(self, instance):
         program = Program.objects.filter(event__id=instance.id).\

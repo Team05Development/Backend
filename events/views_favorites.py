@@ -14,6 +14,7 @@ from .serializers_event import EventFullResponseSerializer
 
 User = get_user_model()
 
+
 @extend_schema(tags=["Favorites"],
                responses=EventFullResponseSerializer)
 @extend_schema_view(

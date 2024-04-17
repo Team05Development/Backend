@@ -36,14 +36,14 @@ User = get_user_model()
     retrieve=extend_schema(
             summary="Show full description of event (with program)",
             responses={
-            status.HTTP_200_OK: EventFullResponseSerializer,
-        },
+                status.HTTP_200_OK: EventFullResponseSerializer,
+                },
         ),
     partial_update=extend_schema(
             summary="Update info about event",
             responses={
-            status.HTTP_200_OK: EventFullResponseSerializer,
-        },
+                status.HTTP_200_OK: EventFullResponseSerializer,
+                },
         ),
     destroy=extend_schema(
             summary="Delete event",
@@ -52,7 +52,6 @@ User = get_user_model()
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'option']
-    # serializer_class = EventPostSerializer
     # permission_classes = (ReadOnly,)
     pagination_class = CustomPageNumberPagination
     filter_backends = (

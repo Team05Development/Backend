@@ -4,8 +4,7 @@
 * [API documentation](http://158.160.154.62/api/schema/redoc/).
 
 Authors:
-* beluza-n (Teamlead)
-* Sobiyk
+* Anastasia Grechkina (Github beluza-n, telegram @beluza_n)
 
 ## Desicription
 Created during Hackaton+ Funtech at Yandex Practicum. Uses Django Rest Framework. Uses PostgreSQL as database.
